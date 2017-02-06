@@ -1,1 +1,1 @@
-import .spektrixpython
+from spektrixpython import SpektrixRequest
