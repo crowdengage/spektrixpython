@@ -9,7 +9,7 @@ A Python module for interacting with Spektrix API v3. This is module is written 
 
 ### Example
 
-Create a `spektrix.ini` config file from the `spektrix.ini.sample` template.
+Create a `spektrixpython.ini` config file from the `spektrixpython.ini.sample` template.
 
 ```python
 from spektrixpython import SpektrixRequest
