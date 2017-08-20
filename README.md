@@ -11,19 +11,21 @@ replacing `<clientname>` with your Spektrix system name.
 
 `pip install spektrixpython`
 
-Create a `spektrixpython.ini` config file from the `spektrixpython.ini.sample` template and fill in the details for your Spektrix system.
-
 ### Example
 
 ```python
 from spektrixpython import SpektrixRequest
 
+clientname = 'SPEKTRIX CLIENT NAME'
+username = 'API USERNAME'
+key = 'API KEY'
+
 # Get a list of events
-events = SpektrixRequest('events').get()
+events = SpektrixRequest('events', clientname, username, key).get()
 print events
 
 # Create a new basket
-basket = SpektrixRequest('baskets').post()['id']
+basket = SpektrixRequest('baskets', clientname, username, key).post()['id']
 
 # Add a merchandise item to the newly created basket
 endpoint = 'baskets/{}/merchandise'.format(basket)
@@ -31,7 +33,7 @@ endpoint = 'baskets/{}/merchandise'.format(basket)
 # Replace this stockItem Id with one from your Spektrix system.
 payload = {'stockItem':'1AHGJDSMMPLMPPGNLJBQVLBRSKVDLQRPP'}
 
-SpektrixRequest(endpoint).post(payload)
+SpektrixRequest(endpoint, clientname, username, key).post(payload)
 ```
 
 ## License

@@ -1,2 +1,3 @@
-spektrixpython.ini
 dist/*
+*.pyc
+.idea/*
