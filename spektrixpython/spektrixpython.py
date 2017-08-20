@@ -4,18 +4,13 @@ from datetime import datetime
 from hashlib import sha1, md5
 import hmac
 from base64 import b64encode, b64decode
-from ConfigParser import SafeConfigParser
+
 
 class SpektrixRequest(object):
-    def __init__(self, endpoint):
+    def __init__(self, endpoint, spektrix_system, spektrix_api_user, spektrix_api_key):
 
-        config = SafeConfigParser()
-        config.read('spektrixpython.ini')
-
-        spektrix_system = config.get('spektrix','spektrix_system')
-
-        self.spektrix_api_user = config.get('spektrix', 'spektrix_api_user')
-        self.spektrix_api_key = config.get('spektrix', 'spektrix_api_key')
+        self.spektrix_api_user = spektrix_api_user
+        self.spektrix_api_key = spektrix_api_key
 
         base_url = 'https://system.spektrix.com/' + spektrix_system + '/api/v3/'
         self.url = base_url + endpoint
