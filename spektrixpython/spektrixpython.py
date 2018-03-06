@@ -6,13 +6,20 @@ import hmac
 from base64 import b64encode, b64decode
 
 
+class SpektrixCredentials(object):
+    def __init__(self, client_name, api_user, api_key):
+        self.client_name = client_name
+        self.api_user = api_user
+        self.api_key = api_key
+
+
 class SpektrixRequest(object):
-    def __init__(self, endpoint, spektrix_system, spektrix_api_user, spektrix_api_key):
+    def __init__(self, endpoint, credentials):
 
-        self.spektrix_api_user = spektrix_api_user
-        self.spektrix_api_key = spektrix_api_key
+        self.spektrix_api_user = credentials.api_user
+        self.spektrix_api_key = credentials.api_key
 
-        base_url = 'https://system.spektrix.com/' + spektrix_system + '/api/v3/'
+        base_url = 'https://system.spektrix.com/' + credentials.client_name + '/api/v3/'
         self.url = base_url + endpoint
 
     def get(self):
@@ -56,7 +63,7 @@ class SpektrixRequest(object):
         string_to_sign = string_to_sign.encode('utf-8')
 
         signature = hmac.new(decoded_key, string_to_sign, sha1).digest()
-        signature = b64encode(signature)
+        signature = b64encode(signature).decode("utf-8")
 
         headers = {}
         headers['Date'] = date
