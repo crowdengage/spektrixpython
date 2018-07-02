@@ -55,7 +55,7 @@ class SpektrixRequest(object):
         if self.method != 'GET':
             body_string = dumps(payload).encode('utf-8')
             body_string = md5(body_string).digest()
-            body_string = b64encode(body_string)
+            body_string = str(b64encode(body_string), 'utf-8')
 
             string_to_sign = string_to_sign + '\n' + body_string
 
