@@ -8,6 +8,7 @@ from base64 import b64encode, b64decode
 
 
 class SpektrixCredentials(object):
+
     def __init__(self, client_name, api_user, api_key):
         self.client_name = client_name
         self.api_user = api_user
@@ -15,60 +16,63 @@ class SpektrixCredentials(object):
 
 
 class SpektrixRequest(object):
+
     def __init__(self, endpoint, credentials):
 
         self.spektrix_api_user = credentials.api_user
         self.spektrix_api_key = credentials.api_key
 
-        base_url = 'https://system.spektrix.com/' + credentials.client_name + '/api/v3/'
+        base_url = "https://system.spektrix.com/" + credentials.client_name + "/api/v3/"
         self.url = base_url + endpoint
 
     def get(self):
-        self.method = 'GET'
+        self.method = "GET"
         response = self._make_request()
         return response
 
     def post(self, payload=None):
-        self.method = 'POST'
+        self.method = "POST"
         response = self._make_request(payload)
         return response
 
     def patch(self, payload):
-        self.method = 'PATCH'
+        self.method = "PATCH"
         response = self._make_request(payload)
         return response
 
     def put(self, payload):
-        self.method = 'PUT'
+        self.method = "PUT"
         response = self._make_request(payload)
         return response
 
     def delete(self, payload=None):
-        self.method = 'DELETE'
+        self.method = "DELETE"
         response = self._make_request(payload)
         return response
 
     def _generate_auth_headers(self, payload=None):
-        date = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        date = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-        string_to_sign = self.method + '\n' + self.url + '\n' + date
+        string_to_sign = self.method + "\n" + self.url + "\n" + date
 
-        if self.method != 'GET':
-            body_string = dumps(payload).encode('utf-8')
+        if self.method != "GET":
+            body_string = dumps(payload).encode("utf-8")
             body_string = md5(body_string).digest()
-            body_string = str(b64encode(body_string), 'utf-8')
+            body_string = str(b64encode(body_string), "utf-8")
 
-            string_to_sign = string_to_sign + '\n' + body_string
+            string_to_sign = string_to_sign + "\n" + body_string
 
         decoded_key = b64decode(self.spektrix_api_key)
-        string_to_sign = string_to_sign.encode('utf-8')
+        string_to_sign = string_to_sign.encode("utf-8")
 
         signature = hmac.new(decoded_key, string_to_sign, sha1).digest()
         signature = b64encode(signature).decode("utf-8")
 
         headers = {}
-        headers['Date'] = date
-        headers['Authorization'] = "SpektrixAPI3 {}:{}".format(self.spektrix_api_user, signature)
+        headers["Date"] = date
+        headers["Authorization"] = "SpektrixAPI3 {}:{}".format(
+            self.spektrix_api_user, signature
+        )
 
         return headers
 
@@ -85,9 +89,7 @@ class SpektrixRequest(object):
         session = Session()
         req = Request(method=self.method, url=self.url, json=payload, headers=headers)
 
-        response = session.send(
-            req.prepare()
-        )
+        response = session.send(req.prepare())
 
         response.raise_for_status()
 
