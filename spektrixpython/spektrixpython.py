@@ -1,5 +1,5 @@
 from requests import Request, Session
-from json import dumps, loads
+from json import dumps
 from json.decoder import JSONDecodeError
 from datetime import datetime
 from hashlib import sha1, md5
