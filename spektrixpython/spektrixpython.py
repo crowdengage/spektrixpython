@@ -1,5 +1,6 @@
 from requests import Request, Session
 from json import dumps, loads
+from json.decoder import JSONDecodeError
 from datetime import datetime
 from hashlib import sha1, md5
 import hmac
@@ -90,4 +91,8 @@ class SpektrixRequest(object):
 
         response.raise_for_status()
 
-        return response.json()
+        try:
+            return response.json()
+        except JSONDecodeError:
+            # There is one endpoint which returns non-JSON content (instances/{}/status/detail)
+            return response.content
