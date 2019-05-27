@@ -1,4 +1,4 @@
-appdirs==1.4.0
+appdirs==1.4.3
 packaging==19.0
 pyparsing==2.1.10
 requests==2.22.0
