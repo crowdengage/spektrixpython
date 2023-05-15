@@ -8,19 +8,25 @@ from base64 import b64encode, b64decode
 
 
 class SpektrixCredentials(object):
-
     def __init__(self, client_name, api_user, api_key):
         self.client_name = client_name
         self.api_user = api_user
         self.api_key = api_key
 
 
-class SpektrixRequest(object):
+class SpektrixAnonymous(object):
+    def __init__(self, client_name):
+        self.client_name = client_name
+        self.api_user = None
+        self.api_key = None
 
+
+class SpektrixRequest(object):
     def __init__(self, endpoint, credentials):
 
         self.spektrix_api_user = credentials.api_user
         self.spektrix_api_key = credentials.api_key
+        self.has_credentials = isinstance(credentials, SpektrixCredentials)
 
         base_url = "https://system.spektrix.com/" + credentials.client_name + "/api/v3/"
         self.url = base_url + endpoint
@@ -51,6 +57,9 @@ class SpektrixRequest(object):
         return response
 
     def _generate_auth_headers(self, payload=None):
+        if not self.has_credentials:
+            return {}
+
         date = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
         string_to_sign = self.method + "\n" + self.url + "\n" + date
