@@ -23,7 +23,6 @@ class SpektrixAnonymous(object):
 
 class SpektrixRequest(object):
     def __init__(self, endpoint, credentials):
-
         self.spektrix_api_user = credentials.api_user
         self.spektrix_api_key = credentials.api_key
         self.has_credentials = isinstance(credentials, SpektrixCredentials)
@@ -86,7 +85,6 @@ class SpektrixRequest(object):
         return headers
 
     def _make_request(self, payload=None):
-
         if payload == None:
             # Spektrix assumes any non-GET request must have a body.
             payload = {}

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "spektrixpython"
-version = "0.6.0"
+version = "0.6.1"
 description = "A Python 3 module for interacting with Spektrix API v3. This module is written by a third party and is not supported by or affiliated with Spektrix."
 authors = ["Hugh Topping <hugh@crowdengage.com>"]
 license = "MIT"
