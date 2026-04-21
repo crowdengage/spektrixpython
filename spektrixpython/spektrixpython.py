@@ -7,6 +7,10 @@ import hmac
 from base64 import b64encode, b64decode
 
 
+class MissingClientNameError(ValueError):
+    pass
+
+
 class SpektrixCredentials(object):
     def __init__(self, client_name, api_user, api_key):
         self.client_name = client_name
@@ -23,12 +27,17 @@ class SpektrixAnonymous(object):
 
 class SpektrixRequest(object):
     def __init__(self, endpoint, credentials):
-        self.spektrix_api_user = credentials.api_user
-        self.spektrix_api_key = credentials.api_key
-        self.has_credentials = isinstance(credentials, SpektrixCredentials)
+        self.endpoint = endpoint
+        self.credentials = credentials
 
-        base_url = "https://system.spektrix.com/" + credentials.client_name + "/api/v3/"
-        self.url = base_url + endpoint
+    @property
+    def url(self):
+        if not self.credentials.client_name:
+            raise MissingClientNameError()
+
+        return "https://system.spektrix.com/{}/api/v3/{}".format(
+            self.credentials.client_name, self.endpoint
+        )
 
     def get(self):
         self.method = "GET"
@@ -56,7 +65,7 @@ class SpektrixRequest(object):
         return response
 
     def _generate_auth_headers(self, payload=None):
-        if not self.has_credentials:
+        if not isinstance(self.credentials, SpektrixCredentials):
             return {}
 
         date = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -70,7 +79,7 @@ class SpektrixRequest(object):
 
             string_to_sign = string_to_sign + "\n" + body_string
 
-        decoded_key = b64decode(self.spektrix_api_key)
+        decoded_key = b64decode(self.credentials.api_key)
         string_to_sign = string_to_sign.encode("utf-8")
 
         signature = hmac.new(decoded_key, string_to_sign, sha1).digest()
@@ -79,13 +88,13 @@ class SpektrixRequest(object):
         headers = {}
         headers["Date"] = date
         headers["Authorization"] = "SpektrixAPI3 {}:{}".format(
-            self.spektrix_api_user, signature
+            self.credentials.api_user, signature
         )
 
         return headers
 
     def _make_request(self, payload=None):
-        if payload == None:
+        if payload is None:
             # Spektrix assumes any non-GET request must have a body.
             payload = {}
         else:
